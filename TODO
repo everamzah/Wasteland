@@ -1,0 +1,112 @@
+[X] Remove creative mod, give_initial_stuff
+
+*   Remove checks for singleplayer, damage, etc
+
+*   Poisen function really should kill at <1 hp
+
+[X] Poisen hud icon is bread, but needs to be drumstick
+
+*   Last I knew, cotton broke on minerals
+
+*   Cotton is string, and should be renamed.  Cotton, apparently, has med-
+    icinal purposes.
+
+*   FIX itemdrop (haha, dropping results in insta-pickup) -- Still needs
+    sound plop on click-pickup.
+
+*   Nametag should send text fields on enter key press.  Currently, pressing
+    the "Proceed" button is required in order to have an effect.
+
+*   Backpack from Kalite.
+
+*   Axe crafts in either direction
+
+[X] Fix hard clay groups.
+
+*   Verify all other groups.
+
+*   Right clicking with some craftitems doesn't looks for def at pointed thing.
+
+[X] Find the hidden goodies (papyrus, cotton, etc) in dungeon loot and ruins
+
+*   Cactus, desert stone? ... (Whatever items pre-exist in source files.)
+
+*   Walls are group stone=1, and this I can probably not remove, as I am lead
+    to believe that this is required for NDT_CONNECTED
+    However, I now notice that its group is actually stone=2, so it is
+    possible that this could be adjusted in, for example, the furnace
+    recipe?  Or not, because recipes use only group:item, and not a rating.
+    [Move to BUGS?]
+
+*   Flush out unused assets, like hud_new.png used by the item wheel hud.
+
+[X] Check wieldhand.png, it appears the wrong one is being used.
+
+*   Ensure no duplicate textures exist, or are overriding one another.
+
+
+--
+WASTELAND
+--
+
+*   Move textual files out of repo, except for LICENSE.txt and README.txt
+
+*   Fix WTFPL
+
+
+--
+BEDS
+--
+*   Sleeping should restore at least some of the players health.
+
+
+--
+DEFAULT
+--
+*   Swap old, unanimated furnace for new nodetimer furnace (!)
+
+*   Update sign fields handling (but keep signlike drawtype)
+
+*   Remove all unncessary aliases
+
+
+--
+CREATURES
+--
+*   Somehow ensure chickens and sheep, or tamed mobs, stay inside fenced areas.
+
+
+--
+PROTECTOR
+--
+*   Fix silly crafting recipe.
+
+
+--
+CRAFTGUIDE
+--
+*   Ensure no unknown recipes exist
+*   Hide uninteresting recipes, like stairs/slabs [?]
+
+
+--
+DYE
+--
+*   Update dye mod, remove unknown recipes
+
+
+--
+MISC
+--
+*   Add cozy in some manner, and restore health when laying, just as in bed
+    or somehow incorporate all of this "resting" and merge it all together.
+
+*   Investigate other interesting BlockMen mods like pyramids and mines.
+    What is landscape?
+
+--------
+AMBIENCE
+--------
+*   Try and improve the sound quality while still minimizing file size
+*   Remove unneeded sounds
+*   Add sounds specific to Wasteland environment/atmosphere

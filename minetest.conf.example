@@ -1,0 +1,55 @@
+#enable_damage -- checked for by: creatures, item_drop, ...
+
+
+## [item_drop]
+# How long to leave item drops on the ground, 0 to disable item drops
+#remove_items = 0
+
+
+## [protector]
+# The radius of protection given by one protector item
+#protector_radius
+
+#protector_drop --del
+#protector_hurt --del
+
+
+## [creatures]
+
+# Likely toggles their hostility, but should probably toggle their spawning.
+# Default false
+#only_peaceful_mobs
+
+# Creatures enable particles, default false
+#creatures_enable_particles
+
+
+## [hud]
+
+#hud_item_wheel --del
+
+#hud_hunger_enable --del
+
+
+
+#enable_bed_respawn --del
+
+#enable_stairs_replace_abm --del
+
+#sprint --del?
+
+#sprint_particles --del?
+
+#enable_tnt --del?
+
+#tnt_radius
+
+
+## [fire]
+
+#disable_fire
+
+
+#liquid_finite -- checked for by bucket mod, not elsewhere defined
+
+#mg_name -- checked for by default/mapgen.lua, looking for 'indev'

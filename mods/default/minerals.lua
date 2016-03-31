@@ -110,9 +110,7 @@ minetest.register_craftitem("default:minerals", {
 	on_use = function(itemstack, user, pointed_thing)
 		if pointed_thing.type == "node" then
 			duengen(pointed_thing)
-			if not minetest.setting_getbool("creative_mode") then
-				itemstack:take_item()
-			end
+			itemstack:take_item()
 			return itemstack
 		end
 	end,

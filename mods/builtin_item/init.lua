@@ -137,6 +137,8 @@ minetest.register_entity(":__builtin:item", {
 		end
 
 		pos.y = pos.y - 0.3
+		local nnn = minetest.get_node_or_nil(pos) -- FIXME
+		if not nnn then return end
 		nn = minetest.get_node_or_nil(pos).name
 		ndef = minetest.registered_nodes[nn]
 		-- If node is not registered or node is walkably solid
@@ -160,6 +162,7 @@ minetest.register_entity(":__builtin:item", {
 	on_punch = function(self, hitter)
 		if self.itemstring ~= '' then
 			local left = hitter:get_inventory():add_item("main", self.itemstring)
+			-- TODO plop sound here
 			if not left:is_empty() then
 				self.itemstring = left:to_string()
 				return

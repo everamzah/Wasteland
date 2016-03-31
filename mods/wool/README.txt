@@ -6,6 +6,7 @@ Mostly backward-compatible with jordach's 16-color wool mod.
 License of source code:
 -----------------------
 Copyright (C) 2012 Perttu Ahola (celeron55) <celeron55@gmail.com>
+Copyright (C) 2016 James Stevenson (everamzah) <everamzah@gmail.com>
 
 This program is free software. It comes without any warranty, to
 the extent permitted by applicable law. You can redistribute it

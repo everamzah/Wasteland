@@ -7,20 +7,20 @@
 function default.node_sound_defaults(table)
 	table = table or {}
 	table.footstep = table.footstep or
-			{name="", gain=1.0}
+			{name = "", gain = 1.0}
 	table.dug = table.dug or
-			{name="default_dug_node", gain=0.25}
+			{name = "default_dug_node", gain = 0.25}
 	table.place = table.place or
-			{name="default_place_node_hard", gain=1.0}
+			{name = "default_place_node_hard", gain = 1.0}
 	return table
 end
 
 function default.node_sound_stone_defaults(table)
 	table = table or {}
 	table.footstep = table.footstep or
-			{name="default_hard_footstep", gain=0.5}
+			{name = "default_hard_footstep", gain = 0.5}
 	table.dug = table.dug or
-			{name="default_hard_footstep", gain=1.0}
+			{name = "default_hard_footstep", gain = 1.0}
 	default.node_sound_defaults(table)
 	return table
 end
@@ -28,11 +28,11 @@ end
 function default.node_sound_dirt_defaults(table)
 	table = table or {}
 	table.footstep = table.footstep or
-			{name="default_dirt_footstep", gain=1.0}
+			{name = "default_dirt_footstep", gain = 1.0}
 	table.dug = table.dug or
-			{name="default_dirt_footstep", gain=1.5}
+			{name = "default_dirt_footstep", gain = 1.5}
 	table.place = table.place or
-			{name="default_place_node", gain=1.0}
+			{name = "default_place_node", gain = 1.0}
 	default.node_sound_defaults(table)
 	return table
 end
@@ -40,11 +40,11 @@ end
 function default.node_sound_sand_defaults(table)
 	table = table or {}
 	table.footstep = table.footstep or
-			{name="default_sand_footstep", gain=0.5}
+			{name = "default_sand_footstep", gain = 0.12}
 	table.dug = table.dug or
-			{name="default_sand_footstep", gain=1.0}
+			{name = "default_sand_footstep", gain = 0.24}
 	table.place = table.place or
-			{name="default_place_node", gain=1.0}
+			{name = "default_place_node", gain = 1.0}
 	default.node_sound_defaults(table)
 	return table
 end
@@ -52,9 +52,9 @@ end
 function default.node_sound_wood_defaults(table)
 	table = table or {}
 	table.footstep = table.footstep or
-			{name="default_wood_footstep", gain=0.5}
+			{name = "default_wood_footstep", gain = 0.5}
 	table.dug = table.dug or
-			{name="default_wood_footstep", gain=1.0}
+			{name = "default_wood_footstep", gain = 1.0}
 	default.node_sound_defaults(table)
 	return table
 end
@@ -62,13 +62,13 @@ end
 function default.node_sound_leaves_defaults(table)
 	table = table or {}
 	table.footstep = table.footstep or
-			{name="default_grass_footstep", gain=0.35}
+			{name = "default_grass_footstep", gain = 0.35}
 	table.dug = table.dug or
-			{name="default_grass_footstep", gain=0.85}
+			{name = "default_grass_footstep", gain = 0.7}
 	table.dig = table.dig or
-			{name="default_dig_crumbly", gain=0.4}
+			{name = "default_dig_crumbly", gain = 0.4}
 	table.place = table.place or
-			{name="default_place_node", gain=1.0}
+			{name = "default_place_node", gain = 1.0}
 	default.node_sound_defaults(table)
 	return table
 end
@@ -76,9 +76,9 @@ end
 function default.node_sound_glass_defaults(table)
 	table = table or {}
 	table.footstep = table.footstep or
-			{name="default_glass_footstep", gain=0.5}
+			{name = "default_glass_footstep", gain = 0.5}
 	table.dug = table.dug or
-			{name="default_break_glass", gain=1.0}
+			{name = "default_break_glass", gain = 1.0}
 	default.node_sound_defaults(table)
 	return table
 end
@@ -246,6 +246,62 @@ minetest.register_abm({
 ]]
 
 --
+-- Fence registration helper
+--
+function default.register_fence(name, def)
+	minetest.register_craft({
+		output = name .. " 4",
+		recipe = {
+			{ def.material, 'group:stick', def.material },
+			{ def.material, 'group:stick', def.material },
+		}
+	})
+
+	local fence_texture = "default_fence_overlay.png^" .. def.texture ..
+			"^default_fence_overlay.png^[makealpha:255,126,126"
+	-- Allow almost everything to be overridden
+	local default_fields = {
+		paramtype = "light",
+		drawtype = "nodebox",
+		node_box = {
+			type = "connected",
+			fixed = {{-1/8, -1/2, -1/8, 1/8, 1/2, 1/8}},
+			-- connect_top =
+			-- connect_bottom =
+			connect_front = {{-1/16,3/16,-1/2,1/16,5/16,-1/8},
+				{-1/16,-5/16,-1/2,1/16,-3/16,-1/8}},
+			connect_left = {{-1/2,3/16,-1/16,-1/8,5/16,1/16},
+				{-1/2,-5/16,-1/16,-1/8,-3/16,1/16}},
+			connect_back = {{-1/16,3/16,1/8,1/16,5/16,1/2},
+				{-1/16,-5/16,1/8,1/16,-3/16,1/2}},
+			connect_right = {{1/8,3/16,-1/16,1/2,5/16,1/16},
+				{1/8,-5/16,-1/16,1/2,-3/16,1/16}},
+		},
+		connects_to = {"group:fence", "group:wood", "group:tree"},
+		inventory_image = fence_texture,
+		wield_image = fence_texture,
+		tiles = {def.texture},
+		sunlight_propagates = true,
+		is_ground_content = false,
+		groups = {},
+	}
+	for k, v in pairs(default_fields) do
+		if not def[k] then
+			def[k] = v
+		end
+	end
+
+	-- Always add to the fence group, even if no group provided
+	def.groups.fence = 1
+
+	def.texture = nil
+	def.material = nil
+
+	minetest.register_node(name, def)
+end
+
+
+--
 -- Leafdecay
 --
 
@@ -313,7 +369,8 @@ minetest.register_abm({
 		end
 		default.leafdecay_trunk_find_allow_accumulator =
 				default.leafdecay_trunk_find_allow_accumulator - 1
-		-- Assume ignore is a trunk, to make the thing work at the border of the active area
+		-- Assume ignore is a trunk, to make the thing
+		-- work at the border of the active area
 		local p1 = minetest.find_node_near(p0, d, {"ignore", "group:tree"})
 		if p1 then
 			do_preserve = true
@@ -325,7 +382,7 @@ minetest.register_abm({
 		end
 		if not do_preserve then
 			-- Drop stuff other than the node itself
-			itemstacks = minetest.get_node_drops(n0.name)
+			local itemstacks = minetest.get_node_drops(n0.name)
 			for _, itemname in ipairs(itemstacks) do
 				if minetest.get_item_group(n0.name, "leafdecay_drop") ~= 0 or
 						itemname ~= n0.name then
@@ -344,7 +401,9 @@ minetest.register_abm({
 	end
 })
 
-
+-- FIXME why not use on_place for node itself?
+-- TODO Check for actual soil group, or whatever, so that placing saplings
+-- on stone, for example, will fail.
 minetest.register_on_placenode(function(pos, newnode, placer, oldnode)
 	if placer:is_player() then 
 		if newnode.name == "default:sapling" then
@@ -355,3 +414,17 @@ minetest.register_on_placenode(function(pos, newnode, placer, oldnode)
 		end
 	end
 end)
+--
+-- Moss growth on cobble near water
+--
+
+minetest.register_abm({
+	nodenames = {"default:cobble"},
+	neighbors = {"group:water"},
+	interval = 16,
+	chance = 200,
+	catch_up = false,
+	action = function(pos, node)
+		minetest.set_node(pos, {name = "default:mossycobble"})
+	end
+})

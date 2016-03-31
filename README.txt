@@ -3,6 +3,9 @@ WASTELAND - a game for the Minetest game engine
 Version 0.5 BETA
 (c) Copyright BlockMen (2013-2015)
 
+Version 0.667 ALPHA BETA PSYCHODELIC FUNK IT
+(c) Copyright everamzah (2016)
+
 
 
 Story:
@@ -29,6 +32,7 @@ Keep in mind, you must eat or you will starve. And hunger comes faster than you 
 License:
 ~~~~~~~~
 (c) Copyright BlockMen (2013-2015)
+(c) Copyright everamzah (2016)
 
 Code:
 If not stated differently in a mod directory the code is licensed under

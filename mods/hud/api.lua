@@ -1,13 +1,13 @@
--- global values
+-- Global values
 hud.registered_items = {}
 hud.damage_events = {}
 hud.breath_events = {}
 
--- keep id handling internal
+-- Keep id handling internal
 local hud_id = {}	-- hud item ids
 local sb_bg = {}	-- statbar background ids
 
--- localize often used table
+-- Localize often used table
 local items = hud.registered_items
 
 local function throw_error(msg)
@@ -25,7 +25,7 @@ function hud.register(name, def)
 		return false
 	end
 
-	--TODO: allow other elements
+	--TODO: Allow other elements
 	if def.hud_elem_type ~= "statbar" then
 		throw_error("The given HUD element is no statbar")
 		return false
@@ -35,8 +35,8 @@ function hud.register(name, def)
 		return false
 	end
 
-	-- actually register
-	-- add background first since draworder is based on id :\
+	-- Actually register
+	-- Add background first since draworder is based on id :\
 	if def.hud_elem_type == "statbar" and def.background ~= nil then
 		sb_bg[name] = table.copy(def)
 		sb_bg[name].text = def.background
@@ -44,10 +44,10 @@ function hud.register(name, def)
 			sb_bg[name].number = def.max
 		end
 	end
-	-- add item itself
+	-- Add item itself
 	items[name] = def
 
-	-- register events
+	-- Register events
 	if def.events then
 		for _,v in pairs(def.events) do
 			if v and v.type and v.func then
@@ -62,11 +62,11 @@ function hud.register(name, def)
 		end
 	end
 	
-	-- no error so far, return sucess
+	-- No error so far, return sucess
 	return true
 end
 
--- swaps stabar positions
+-- Swaps stabar positions
 function hud.swap_statbar(player, item1, item2)
 	if not player or not item1 or not item2 then
 		throw_error("Not enough parameters given to swap statbars")
@@ -99,7 +99,7 @@ function hud.swap_statbar(player, item1, item2)
 		pos_swap = true
 	end
 
-	-- do the items have backgrounds? if so, swap them aswell
+	-- Do the items have backgrounds? if so, swap them aswell
 	local bg1 = hud_id[p_name.."_"..item1.."_bg"] or nil
 	local bg2 = hud_id[p_name.."_"..item2.."_bg"] or nil
 	if bg1 ~= nil and bg1.id then
@@ -132,7 +132,7 @@ function hud.change_item(player, name, def)
 	end
 
 	-- Only update if values supported and value actually changed
-	-- update supported values (currently number and text only)
+	-- Update supported values (currently number and text only)
 	if def.number and elem.number then
 		if def.number ~= elem.number then
 			if elem.max and def.number > elem.max and not def.max then
@@ -143,7 +143,7 @@ function hud.change_item(player, name, def)
 			end
 			player:hud_change(elem.id, "number", def.number)
 			elem.number = def.number
-			-- hide background when set
+			-- Hide background when set
 			local bg = hud_id[i_name.."_bg"]
 			if elem.autohide_bg then
 				if def.number < 1 then
@@ -173,7 +173,7 @@ function hud.change_item(player, name, def)
 
 	if def.offset and elem.offset then
 		if def.item_name and def.offset == "item" then
-			-- for legacy reasons
+			-- For legacy reasons
 			if def.item_name then
 				hud.swap_statbar(player, name, def.item_name)
 			end
@@ -220,22 +220,22 @@ end
 
 minetest.register_on_joinplayer(function(player)
 
-	-- first: hide the default statbars
+	-- First: hide the default statbars
 	local hud_flags = player:hud_get_flags()
 	hud_flags.healthbar = false
 	hud_flags.breathbar = false
 	player:hud_set_flags(hud_flags)
 
-	-- now add the backgrounds for statbars
+	-- Now add the backgrounds for statbars
 	for _,item in pairs(sb_bg) do
 		add_hud_item(player, _.."_bg", item)
 	end
-	-- and finally the actual HUD items
+	-- And finally the actual HUD items
 	for _,item in pairs(items) do
 		add_hud_item(player, _, item)
 	end
 
-	-- fancy hotbar (only when no crafting mod present)
+	-- Fancy hotbar (only when no crafting mod present)
 	if minetest.get_modpath("crafting") == nil then
 	    minetest.after(0.5, function()
 		player:hud_set_hotbar_image("hud_hotbar.png")

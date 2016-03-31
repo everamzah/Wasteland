@@ -9,7 +9,7 @@ minetest.register_node("farming:soil", {
 	tiles = {"farming_soil.png", "default_dirt.png"},
 	drop = "default:dry_dirt",
 	is_ground_content = true,
-	groups = {crumbly=default.dig.dirt, not_in_creative_inventory=1, soil=2},
+	groups = {crumbly = default.dig.dirt, soil = 2},
 	sounds = default.node_sound_dirt_defaults(),
 	paramtype = "light",
 })
@@ -19,7 +19,7 @@ minetest.register_node("farming:soil_wet", {
 	tiles = {"farming_soil_wet.png", "farming_soil_wet_side.png"},
 	drop = "default:dry_dirt",
 	is_ground_content = true,
-	groups = {crumbly=default.dig.dirt, not_in_creative_inventory=1, soil=3},
+	groups = {crumbly=default.dig.dirt, soil=3},
 	sounds = default.node_sound_dirt_defaults(),
 })
 
@@ -101,12 +101,11 @@ minetest.register_abm({
 			local ll = 0
 			ll=minetest.get_node_light(pos)
 			pos.y = pos.y-1
-			if ll and ll>8 and minetest.registered_nodes[nn] and minetest.get_item_group(nn, "water") ~= 3 then
+			if ll and ll > 8 and minetest.registered_nodes[nn] and minetest.get_item_group(nn, "water") ~= 3 then
 				minetest.set_node(pos, {name="default:grass"})
 			end
 		end
 	end
-
 })
 
 minetest.register_abm({
@@ -120,20 +119,22 @@ minetest.register_abm({
 			pos.y = pos.y+1
 			local nn = minetest.get_node(pos).name
 			pos.y = pos.y-1
-			if minetest.registered_nodes[nn] and minetest.registered_nodes[nn].walkable then
+			if minetest.registered_nodes[nn] and
+					minetest.registered_nodes[nn].walkable and
+					not minetest.registered_nodes[nn].sunlight_propagates then
 				minetest.set_node(pos, {name="default:dry_dirt"})
 			end
 		end
 	end
-
 })
+
 --
 -- Hoes
 --
--- turns nodes with group soil=1 into soil
+-- Turns nodes with group soil=1 into soil
 local function hoe_on_use(itemstack, user, pointed_thing, uses)
 	local pt = pointed_thing
-	-- check if pointing at a node
+	-- Check if pointing at a node
 	if not pt then
 		return
 	end
@@ -145,7 +146,7 @@ local function hoe_on_use(itemstack, user, pointed_thing, uses)
 	local p = {x=pt.under.x, y=pt.under.y+1, z=pt.under.z}
 	local above = minetest.get_node(p)
 	
-	-- return if any of the nodes is not registered
+	-- Return if any of the nodes is not registered
 	if not minetest.registered_nodes[under.name] then
 		return
 	end
@@ -153,27 +154,23 @@ local function hoe_on_use(itemstack, user, pointed_thing, uses)
 		return
 	end
 	
-	-- check if the node above the pointed thing is air
+	-- Check if the node above the pointed thing is air
 	if above.name ~= "air" then
 		return
 	end
 	
-	-- check if pointing at dirt
+	-- Check if pointing at dirt
 	if minetest.get_item_group(under.name, "soil") ~= 1 then
 		return
 	end
 	
-	-- turn the node into soil, wear out item and play sound
+	-- Turn the node into soil, wear out item and play sound
 	minetest.set_node(pt.under, {name="farming:soil"})
 	minetest.sound_play("default_dig_crumbly", {
 		pos = pt.under,
 		gain = 0.5,
 	})
-
-	if not minetest.setting_getbool("creative_mode") then
-		itemstack:add_wear(65535/(uses-1))
-	end
-
+	itemstack:add_wear(65535/(uses-1))
 	return itemstack
 end
 
@@ -183,7 +180,7 @@ minetest.register_tool("farming:hoe_wood", {
 	
 	on_use = function(itemstack, user, pointed_thing)
 		return hoe_on_use(itemstack, user, pointed_thing, 60/3)
-	end,
+	end
 })
 
 minetest.register_tool("farming:hoe_stone", {
@@ -192,7 +189,7 @@ minetest.register_tool("farming:hoe_stone", {
 	
 	on_use = function(itemstack, user, pointed_thing)
 		return hoe_on_use(itemstack, user, pointed_thing, 132/3)
-	end,
+	end
 })
 
 minetest.register_tool("farming:hoe_iron", {
@@ -201,26 +198,19 @@ minetest.register_tool("farming:hoe_iron", {
 	
 	on_use = function(itemstack, user, pointed_thing)
 		return hoe_on_use(itemstack, user, pointed_thing, 251/3)
-	end,
+	end
 })
 
-minetest.register_tool("farming:hoe_gold", {
-	description = "Gold Hoe",
-	inventory_image = "farming_tool_goldhoe.png",
-	
-	on_use = function(itemstack, user, pointed_thing)
-		return hoe_on_use(itemstack, user, pointed_thing, 33/3)
-	end,
-})
-
-minetest.register_tool("farming:hoe_diamond", {
-	description = "Diamond Hoe",
-	inventory_image = "farming_tool_diamondhoe.png",
+minetest.register_tool("farming:hoe_bronze", {
+	description = "Bronze Hoe",
+	inventory_image = "farming_tool_bronzehoe.png",
 	
 	on_use = function(itemstack, user, pointed_thing)
 		return hoe_on_use(itemstack, user, pointed_thing, 1562/3)
-	end,
+	end
 })
+
+-- Craft recipes
 
 minetest.register_craft({
 	output = "farming:hoe_wood",
@@ -228,6 +218,15 @@ minetest.register_craft({
 		{"group:wood", "group:wood"},
 		{"", "group:stick"},
 		{"", "group:stick"},
+	}
+})
+
+minetest.register_craft({
+	output = "farming:hoe_wood",
+	recipe = {
+		{"group:wood", "group:wood"},
+		{"group:stick", ""},
+		{"group:stick", ""},
 	}
 })
 
@@ -241,6 +240,15 @@ minetest.register_craft({
 })
 
 minetest.register_craft({
+	output = "farming:hoe_stone",
+	recipe = {
+		{"group:stone", "group:stone"},
+		{"group:stick", ""},
+		{"group:stick", ""},
+	}
+})
+
+minetest.register_craft({
 	output = "farming:hoe_iron",
 	recipe = {
 		{"default:iron_ingot", "default:iron_ingot"},
@@ -250,25 +258,36 @@ minetest.register_craft({
 })
 
 minetest.register_craft({
-	output = "farming:hoe_gold",
+	output = "farming:hoe_iron",
 	recipe = {
-		{"default:gold_ingot", "default:gold_ingot"},
+		{"default:iron_ingot", "default:iron_ingot"},
+		{"group:stick", ""},
+		{"group:stick", ""},
+	}
+})
+
+minetest.register_craft({
+	output = "farming:hoe_bronze",
+	recipe = {
+		{"default:bronze_ingot", "default:bronze_ingot"},
 		{"", "group:stick"},
 		{"", "group:stick"},
 	}
 })
 
 minetest.register_craft({
-	output = "farming:hoe_diamond",
+	output = "farming:hoe_bronze",
 	recipe = {
-		{"default:diamond", "default:diamond"},
-		{"", "group:stick"},
-		{"", "group:stick"},
+		{"default:bronze_ingot", "default:bronze_ingot"},
+		{"group:stick", ""},
+		{"group:stick", ""},
 	}
 })
+
 --
 -- Place seeds
 --
+
 local function place_seed(itemstack, placer, pointed_thing, plantname)
 	local pt = pointed_thing
 	-- check if pointing at a node
@@ -307,15 +326,14 @@ local function place_seed(itemstack, placer, pointed_thing, plantname)
 	
 	-- add the node and remove 1 item from the itemstack
 	minetest.add_node(pt.above, {name=plantname})
-	if not minetest.setting_getbool("creative_mode") then
-		itemstack:take_item()
-	end
+	itemstack:take_item()
 	return itemstack
 end
 
 --
 -- Wheat
 --
+
 minetest.register_craftitem("farming:seed_wheat", {
 	description = "Wheat Seed",
 	inventory_image = "farming_wheat_seed.png",
@@ -357,7 +375,7 @@ minetest.register_craft({
 	recipe = "farming:flour"
 })
 
-for i=1,8 do
+for i = 1, 8 do
 	local drop = {
 		items = {
 			{items = {'farming:wheat'},rarity=9-i},
@@ -378,7 +396,7 @@ for i=1,8 do
 			type = "fixed",
 			fixed = {-0.5, -0.5, -0.5, 0.5, -5/16, 0.5},
 		},
-		groups = {dig=default.dig.instant,flammable=2,plant=1,wheat=i,not_in_creative_inventory=1,attached_node=1},
+		groups = {dig=default.dig.instant, flammable=2, plant=1, wheat=i, attached_node=1},
 		sounds = default.node_sound_leaves_defaults(),
 	})
 end
@@ -419,6 +437,7 @@ minetest.register_abm({
 --
 -- Cotton
 --
+
 minetest.register_craftitem("farming:seed_cotton", {
 	description = "Cotton Seed",
 	inventory_image = "farming_cotton_seed.png",
@@ -465,7 +484,7 @@ for i=1,8 do
 			type = "fixed",
 			fixed = {-0.5, -0.5, -0.5, 0.5, -5/16, 0.5},
 		},
-		groups = {dig=default.dig.instant,flammable=2,plant=1,cotton=i,not_in_creative_inventory=1,attached_node=1},
+		groups = {dig=default.dig.instant, flammable=2, plant=1, cotton=i, attached_node=1},
 		sounds = default.node_sound_leaves_defaults(),
 	})
 end

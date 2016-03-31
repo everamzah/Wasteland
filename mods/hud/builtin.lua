@@ -16,7 +16,7 @@ HUD_ARMOR_POS = {x = 0.5, y = 1}
 HUD_ARMOR_OFFSET = {x = -262, y = -110}
 
 -- Reorder everything when using ItemWeel
-hud.item_wheel = minetest.setting_getbool("hud_item_wheel")
+--[[hud.item_wheel = minetest.setting_getbool("hud_item_wheel")
 if hud.item_wheel then
 	HUD_HEALTH_POS = {x = 0.5,y = 1}
 	HUD_HEALTH_OFFSET = {x = -385, y = -77}
@@ -26,7 +26,7 @@ if hud.item_wheel then
 	HUD_HUNGER_OFFSET = {x = 180, y = -44}
 	HUD_ARMOR_POS = {x = 0.5, y = 1}
 	HUD_ARMOR_OFFSET = {x = -415, y = -44}
-end
+end]]
 
 -- read hud.conf settings
 hud.read_conf()
@@ -38,7 +38,8 @@ hud.show_armor = minetest.get_modpath("3d_armor") ~= nil
 
 -- check if some settings are invalid
 local enable_hunger = minetest.setting_getbool("hud_hunger_enable")
-if (enable_hunger == true or HUD_ENABLE_HUNGER == true) and not hud.show_hunger then
+--if (enable_hunger == true or HUD_ENABLE_HUNGER == true) and not hud.show_hunger then
+if (enable_hunger == true) and not hud.show_hunger then
 	hud.notify_hunger(5)
 end
 

@@ -106,13 +106,25 @@ local hunger_timer = 0
 local health_timer = 0
 local action_timer = 0
 
+-- Settings
+local enable_sprint = minetest.setting_getbool("sprint")
+if enable_sprint == nil then
+	enable_sprint = true
+end
+
+local enable_sprint_particles = minetest.setting_getbool("sprint_particles")
+if enable_sprint_particles == nil then
+	enable_sprint_particles = true
+end
+
+-- Stepper
 local function hunger_globaltimer(dtime)
 	hunger_timer = hunger_timer + dtime
 	health_timer = health_timer + dtime
 	action_timer = action_timer + dtime
 
 	if action_timer > HUNGER_MOVE_TICK then
-		for _,player in ipairs(minetest.get_connected_players()) do
+		for _, player in ipairs(minetest.get_connected_players()) do
 			local controls = player:get_player_control()
 			-- Determine if the player is walking
 			if controls.up or controls.down or controls.left or controls.right then
@@ -122,9 +134,9 @@ local function hunger_globaltimer(dtime)
 		action_timer = 0
 	end
 
-	-- lower saturation by 1 point after <HUNGER_TICK> second(s)
+	-- Lower saturation by 1 point after <HUNGER_TICK> second(s)
 	if hunger_timer > HUNGER_TICK then
-		for _,player in ipairs(minetest.get_connected_players()) do
+		for _, player in ipairs(minetest.get_connected_players()) do
 			local name = player:get_player_name()
 			local tab = hunger.players[name]
 			if tab then
@@ -137,9 +149,9 @@ local function hunger_globaltimer(dtime)
 		hunger_timer = 0
 	end
 
-	-- heal or damage player, depending on saturation
+	-- Heal or damage player, depending on saturation
 	if health_timer > HUNGER_HEALTH_TICK then
-		for _,player in ipairs(minetest.get_connected_players()) do
+		for _, player in ipairs(minetest.get_connected_players()) do
 			local name = player:get_player_name()
 			local tab = hunger.players[name]
 			if tab then
@@ -160,6 +172,90 @@ local function hunger_globaltimer(dtime)
 
 		health_timer = 0
 	end
+
+	if enable_sprint then
+		-- Get the gametime
+		local gameTime = minetest.get_gametime()
+
+		-- Loop through all connected players
+		for name, info in pairs(hunger.players) do
+			local player = minetest.get_player_by_name(name)
+			if player ~= nil then
+				-- Check if the player should be sprinting
+				if player:get_player_control()["aux1"] and
+						(player:get_player_control()["up"] or
+						player:get_player_control()["down"] or
+						player:get_player_control()["left"] or
+						player:get_player_control()["right"] or
+						player:get_player_control()["jump"] or
+						player:get_player_control()["sneak"]) then
+					hunger.players[name]["shouldSprint"] = true
+				else
+					hunger.players[name]["shouldSprint"] = false
+				end
+
+				-- FIXME Sometimes particle spawners don't die
+				-- If the player is sprinting, create particles behind him/her as per sprint_particles setting
+				if enable_sprint_particles then
+					if info["sprinting"] == true and gameTime % 0.1 == 0 then
+						local numParticles = math.random(1, 2)
+						local playerPos = player:getpos()
+						local playerNode = minetest.get_node({x=playerPos["x"], y=playerPos["y"]-1, z=playerPos["z"]})
+						if playerNode["name"] ~= "air" then
+							--for i=1, numParticles, 1 do
+								--[[
+								minetest.add_particle({
+									pos = {x=playerPos["x"]+math.random(-1,1)*math.random()/2,y=playerPos["y"]+0.1,z=playerPos["z"]+math.random(-1,1)*math.random()/2},
+									vel = {x=0, y=5, z=0},
+									acc = {x=0, y=-13, z=0},
+									expirationtime = math.random(),
+									size = math.random()+0.5,
+									collisiondetection = true,
+									vertical = false,
+									texture = "default_dirt.png" --"sprint_particle.png",
+								})
+								--]]
+								minetest.add_particlespawner({
+									amount = numParticles, -- default: 1
+									time = math.random(), -- 0.1,
+									minpos = {x=playerPos["x"]+math.random(-1,0)*math.random()/2, y=playerPos["y"]+0.1, z=playerPos["z"]+math.random(-1,0)*math.random()/2},
+									maxpos = {x=playerPos["x"]+math.random(0,1)*math.random()/2, y=playerPos["y"]+0.1, z=playerPos["z"]+math.random(0,1)*math.random()/2},
+									minvel = {x=0, y=5, z=0},
+									maxvel = {x=0, y=5, z=0},
+									minacc = {x=0, y=-13, z=0},
+									maxacc = {x=0, y=-13, z=0},
+									minexptime = 0.25, -- default: 1
+									maxexptime = 1, -- default: 1
+									minsize = 0.5, -- default: 1
+									maxsize = 1.5, -- default: 1
+									collisiondetection = true, -- default: false
+									vertical = false,
+									texture = "default_dirt.png", -- TODO: May as well grab node's texture, here.
+									playername = name -- optional, if specified only shows client-side
+								})
+							--end
+						end
+					end
+				end
+
+				-- Adjust player states
+				if hunger.players[name]["shouldSprint"] == true then --Stopped
+					hunger.setSprinting(name, true)
+				elseif hunger.players[name]["shouldSprint"] == false then
+					hunger.setSprinting(name, false)
+				end
+				
+				-- Lower the player's stamina by dtime if he/she is sprinting and set his/her state to 0 if stamina is zero
+				if info["sprinting"] == true then 
+					update_hunger(player, hunger.players[name].lvl - SPRINT_DRAIN * dtime)
+					if hunger.players[name].lvl <= 1 then -- <= 0
+						--hunger.update_hunger(player, 0)
+						hunger.setSprinting(name, false)
+					end
+				end
+			end
+		end
+	end
 end
 
 if minetest.setting_getbool("enable_damage") then
@@ -174,9 +270,9 @@ function hunger.register_food(name, hunger_change, replace_with_item, poisen, he
 	food[name] = {}
 	food[name].saturation = hunger_change	-- hunger points added
 	food[name].replace = replace_with_item	-- what item is given back after eating
-	food[name].poisen = poisen				-- time its poisening
-	food[name].healing = heal				-- amount of HP
-	food[name].sound = sound				-- special sound that is played when eating
+	food[name].poisen = poisen		-- time its poisening
+	food[name].healing = heal		-- amount of HP
+	food[name].sound = sound		-- special sound that is played when eating
 end
 
 -- Poison player
@@ -187,7 +283,7 @@ local function poisenp(tick, time, time_left, player)
 	else
 		hud.change_item(player, "hunger", {text = "hud_hunger_fg.png"})
 	end
-	local hp = player:get_hp() -1 or 0
+	local hp = player:get_hp() - 1 or 0
 	if hp > 0 then
 		player:set_hp(hp)
 	end
@@ -275,4 +371,19 @@ function hunger.item_eat(hunger_change, replace_with_item, poisen, heal, sound)
 
 	return itemstack
     end
+end
+
+-- Sets the state of a player (0=stopped/moving, 1=sprinting)
+function hunger.setSprinting(name, sprinting)
+	local player = minetest.get_player_by_name(name)
+	if hunger.players[name] then
+		hunger.players[name]["sprinting"] = sprinting
+		if sprinting == true then
+			player:set_physics_override({speed = SPRINT_SPEED, jump = SPRINT_JUMP})
+		elseif sprinting == false then
+			player:set_physics_override({speed = 1.0,jump = 1.0})
+		end
+		return true
+	end
+	return false
 end

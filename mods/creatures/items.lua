@@ -1,67 +1,39 @@
--------------------------------------------------------------------------
--- Wasteland
--- Copyright (C) 2015 BlockMen <blockmen2015@gmail.de>
+--= Creatures MOB-Engine (cme) =--
+-- Copyright (c) 2015-2016 BlockMen <blockmen2015@gmail.com>
 --
--- This file is part of Wasteland
+-- items.lua
 --
--- This program is free software: you can redistribute it and/or modify
--- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation, either version 3 of the License, or
--- (at your option) any later version.
+-- This software is provided 'as-is', without any express or implied warranty. In no
+-- event will the authors be held liable for any damages arising from the use of
+-- this software.
 --
--- This program is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--- GNU General Public License for more details.
+-- Permission is granted to anyone to use this software for any purpose, including
+-- commercial applications, and to alter it and redistribute it freely, subject to the
+-- following restrictions:
 --
--- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see <http://www.gnu.org/licenses/>.
--------------------------------------------------------------------------
+-- 1. The origin of this software must not be misrepresented; you must not
+-- claim that you wrote the original software. If you use this software in a
+-- product, an acknowledgment in the product documentation is required.
+-- 2. Altered source versions must be plainly marked as such, and must not
+-- be misrepresented as being the original software.
+-- 3. This notice may not be removed or altered from any source distribution.
+--
 
 
--- drop items
-minetest.register_craftitem("creatures:flesh", {
+core.register_craftitem("creatures:flesh", {
 	description = "Flesh",
 	inventory_image = "creatures_flesh.png",
-	on_use = minetest.item_eat(2),
-	stack_max = 60,
+	on_use = core.item_eat(2),
 })
 
-minetest.register_craftitem("creatures:rotten_flesh", {
-	description = "Rotten Flesh",
-	inventory_image = "creatures_rotten_flesh.png",
-	on_use = minetest.item_eat(1),
-	stack_max = 60,
-})
-
--- food
-minetest.register_craftitem("creatures:meat", {
+core.register_craftitem("creatures:meat", {
 	description = "Cooked Meat",
 	inventory_image = "creatures_meat.png",
-	on_use = minetest.item_eat(4),
-	stack_max = 60,
+	on_use = core.item_eat(4),
 })
 
-minetest.register_craft({
+core.register_craft({
 	type = "cooking",
 	output = "creatures:meat",
 	recipe = "creatures:flesh",
-})
-
--- spawn-eggs
-minetest.register_craftitem("creatures:zombie_spawn_egg", {
-	description = "Zombie spawn-egg",
-	inventory_image = "creatures_egg_zombie.png",
-	liquids_pointable = false,
-	stack_max = 60,
-	on_place = function(itemstack, placer, pointed_thing)
-		if pointed_thing.type == "node" then
-			local p = pointed_thing.above
-			p.y = p.y+1
-			creatures.spawn(p, 1, "creatures:zombie", 1, 1)
-			if not minetest.setting_getbool("creative_mode") then itemstack:take_item() end
-			return itemstack
-		end
-	end,
-
 })

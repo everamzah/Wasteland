@@ -1,17 +1,3 @@
--- Minetest 0.4 mod: default
--- See README.txt for licensing and other information.
-
--- Map Generation
-dofile(minetest.get_modpath("flowers").."/mapgen.lua")
-
--- Aliases for original flowers mod
-minetest.register_alias("flowers:flower_dandelion_white", "flowers:dandelion_white")
-minetest.register_alias("flowers:flower_dandelion_yellow", "flowers:dandelion_yellow")
-minetest.register_alias("flowers:flower_geranium", "flowers:geranium")
-minetest.register_alias("flowers:flower_rose", "flowers:rose")
-minetest.register_alias("flowers:flower_tulip", "flowers:tulip")
-minetest.register_alias("flowers:flower_viola", "flowers:viola")
-
 minetest.register_node("flowers:dandelion_white", {
 	description = "White Dandelion",
 	drawtype = "plantlike",

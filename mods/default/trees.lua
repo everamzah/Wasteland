@@ -1,4 +1,4 @@
-local c_air = minetest.get_content_id("air")
+local c_air = minetest.get_content_id("air") --FIXME ?!
 local c_ignore = minetest.get_content_id("ignore")
 local c_tree = minetest.get_content_id("default:tree")
 local c_leaves = minetest.get_content_id("default:leaves")

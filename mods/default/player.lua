@@ -139,21 +139,12 @@ function default.player_set_animation(player, anim_name, speed)
 	player:set_animation(anim, speed or model.animation_speed, animation_blend)
 end
 
-minetest.register_on_newplayer(function(player)
-	local name = player:get_player_name()
-	local form = ""
-	--minetest.show_formspec(name, "welcome", formspec)
-	minetest.chat_send_player(name, "To pick up dropped nodes use the USE-Key (default 'E')")
-end)
-
 -- Update appearance when the player joins
 minetest.register_on_joinplayer(function(player)
 	default.player_set_model(player, "character.x")
 	player:set_local_animation({x=0, y=79}, {x=168, y=187}, {x=189, y=198}, {x=200, y=219}, 30)
 
-	if not minetest.setting_getbool("creative_mode") then
-		player:set_inventory_formspec(default.gui_suvival_form)
-	end
+	player:set_inventory_formspec(default.gui_suvival_form)
 end)
 
 minetest.register_on_leaveplayer(function(player)

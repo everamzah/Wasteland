@@ -1,0 +1,56 @@
+--
+BEDS
+--
+Beds are skipping the night after clicking "leave bed".  They should only skip
+the night if "skip night" button is clicked.
+
+
+--
+DEFAULT
+--
+Undeclared global variable "dir" accessed at wasteland/mods/default/nodes.lua:668
+
+
+--
+RUINS
+--
+WARNINGS:
+Undeclared global variable "frm" accessed at wasteland/mods/ruins/init.lua:90
+Assignment to undeclared global "new" inside a function at wasteland/mods/ruins/init.lua:194.
+^ Ruins
+
+ERRORS:
+ServerError: Runtime error from mod 'ruins' in callback environment_Step(): wasteland/mods/ruins/init.lua:108: attempt to index local 'n' (a nil value)
+
+
+--
+HUD
+--
+
+
+--
+HUNGER
+--
+*   My worst fears confirmed!  Sprinting particles are not getting destroyed under some certain circumstance.
+
+*   Register on cheat protection, somehow allow sprint without
+    disabling the anticheat?  [Doesn't seem possible, move this item to
+    BUGS]
+
+
+--
+COFFIN
+--
+INFO:
+<ACTION> 2016-03-28 23:08:34: [Server]  digs default:dry_dirt at (-176,2,-228)
+^ This one is about when you die and the game places a coffin
+  Not really a bug, but it is a bug.  Note the space before `digs'.
+  This "non-player" will replace any node.
+
+
+--
+DUNGEON_LOOT
+--
+Assignment to undeclared global "list_name" inside a function at wasteland/mods/dungeon_loot/init.lua:97.
+Assignment to undeclared global "list_name_string" inside a function at wasteland/mods/dungeon_loot/init.lua:98.
+Assignment to undeclared global "lsf" inside a function at wasteland/mods/dungeon_loot/init.lua:100.

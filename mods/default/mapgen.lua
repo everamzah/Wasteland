@@ -1,4 +1,4 @@
--- mods/default/mapgen.lua
+-- wasteland/mods/default/mapgen.lua
 
 --
 -- Aliases for map generator outputs

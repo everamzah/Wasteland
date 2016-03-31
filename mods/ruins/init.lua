@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------
 -- Wasteland
 -- Copyright (C) 2015 BlockMen <blockmen2015@gmail.de>
+-- Copyright (C) 2016 everamzah <everamzah@gmail.com>
 --
 -- This file is part of Wasteland
 --
@@ -23,6 +24,7 @@ local chest_stuff = {
 	{name="default:old_apple", max = 1, rarity=1},
 	{name="default:old_bread", max = 1, rarity=6},
 	{name="farming:seed_wheat", max = 1, rarity=5},
+	{name="farming:seed_cotton", max = 1, rarity=5},
 	{name="bucket:bucket_empty", max = 1, rarity=7},
 	{name="bucket:bucket_water", max = 1, rarity=9},
 	{name="default:sword_wood", max = 1, rarity=9},
@@ -105,6 +107,7 @@ end
 
 local function can_replace(pos)
 	local n = minetest.get_node_or_nil(pos)
+	if not n then return end --FIXME
 	local ndef = minetest.registered_nodes[n.name]
 	if (ndef and not ndef.walkable) or not n then
 		return true
@@ -124,7 +127,7 @@ local function ground(pos)
 		if cnt > 25 then
 			break
 		end
-		if cnt>math.random(2, 4) then
+		if cnt > math.random(2, 4) then
 			mat = "stone"
 		end
 		minetest.swap_node(p, {name = "default:" .. mat})
@@ -189,7 +192,10 @@ local function generate_sized(pos, size)
 				if math.random(1, yi) == 1 then
 					local mat = "wood"
 					if not wood then
-						new = material[math.random(1, 2)]
+						--new = material[math.random(1, 2)]
+
+						-- This isn't referenced anywhere, so
+						-- is it safe to simply omit?
 					end
 					if yi == 2 and math.random(1, 10) == 3 then
 						mat = "glass"
@@ -223,7 +229,7 @@ end
 
 local function generate_coffin(pos)
 	minetest.add_node(pos, {name = "coffin:coffin"})
-	fill_grave({x=pos.x,y=pos.y,z=pos.z})
+	fill_grave({x=pos.x, y=pos.y, z=pos.z})
 	pos.y = pos.y + 1
 	minetest.swap_node(pos, {name = "coffin:gravestone"})
 end

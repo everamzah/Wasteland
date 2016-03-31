@@ -1,15 +1,15 @@
 minetest.register_globalstep(function(dtime)
-	for _,player in ipairs(minetest.get_connected_players()) do
+	for _, player in ipairs(minetest.get_connected_players()) do
 		if player:get_hp() > 0 or not minetest.setting_getbool("enable_damage") then
 			local pos = player:getpos()
 			local controls = player:get_player_control()
-			pos.y = pos.y+0.5
+			pos.y = pos.y + 0.5
 			local inv = player:get_inventory()
-			local objcts1 = minetest.env:get_objects_inside_radius(pos, 1)
-			local objcts2 = minetest.env:get_objects_inside_radius(pos, 2)
-			for _,object in ipairs(objcts1) do
+			local objcts1 = minetest.get_objects_inside_radius(pos, 1)
+			local objcts2 = minetest.get_objects_inside_radius(pos, 2)
+			for _, object in ipairs(objcts1) do
 				if not object:is_player() and object:get_luaentity() and object:get_luaentity().name == "__builtin:item" then
-					if inv and inv:room_for_item("main", ItemStack(object:get_luaentity().itemstring)) and controls.aux1 then
+					if inv and inv:room_for_item("main", ItemStack(object:get_luaentity().itemstring)) then --and controls.aux1 then
 						inv:add_item("main", ItemStack(object:get_luaentity().itemstring))
 						if object:get_luaentity().itemstring ~= "" then
 							minetest.sound_play("item_drop_pickup", {
@@ -23,10 +23,10 @@ minetest.register_globalstep(function(dtime)
 				end
 			end
 			
-			for _,object in ipairs(objcts2) do
+			for _, object in ipairs(objcts2) do
 				if not object:is_player() and object:get_luaentity() and object:get_luaentity().name == "__builtin:item" then
 					if object:get_luaentity().collect then
-						if inv and inv:room_for_item("main", ItemStack(object:get_luaentity().itemstring)) and controls.aux1 then
+						if inv and inv:room_for_item("main", ItemStack(object:get_luaentity().itemstring)) then -- and controls.aux1 then
 							local pos1 = pos
 							pos1.y = pos1.y+0.2
 							local pos2 = object:getpos()
@@ -74,10 +74,7 @@ end)
 
 function minetest.handle_node_drops(pos, drops, digger)
 	local inv
-	if minetest.setting_getbool("creative_mode") and digger and digger:is_player() then
-		inv = digger:get_inventory()
-	end
-	for _,item in ipairs(drops) do
+	for _, item in ipairs(drops) do
 		local count, name
 		if type(item) == "string" then
 			count = 1
@@ -88,7 +85,7 @@ function minetest.handle_node_drops(pos, drops, digger)
 		end
 		if not inv or not inv:contains_item("main", ItemStack(name)) then
 			for i=1,count do
-				local obj = minetest.env:add_item(pos, name)
+				local obj = minetest.add_item(pos, name)
 				if obj ~= nil then
 					obj:get_luaentity().collect = true
 					local x = math.random(1, 5)
@@ -111,8 +108,4 @@ function minetest.handle_node_drops(pos, drops, digger)
 			end
 		end
 	end
-end
-
-if minetest.setting_get("log_mods") then
-	minetest.log("action", "item_drop loaded")
 end
